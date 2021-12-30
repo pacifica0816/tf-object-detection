@@ -16,7 +16,6 @@ from object_detection.utils import visualization_utils as viz_utils
 
 # 내 로컬에 설치된 레이블 파일을, 인덱스와 연결시킨다.
 PATH_TO_LABELS = 'C:\\Users\\khy86\\OneDrive\\문서\\TensorFlow\\models\\research\\object_detection\\data\\mscoco_label_map.pbtxt'
-
 category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS)
 
 print(category_index)
@@ -49,6 +48,7 @@ def load_model(model_dir) :
     return detection_model
 
 detection_model = load_model(PATH_TO_MODEL_DIR)
+
 print()
 print(detection_model.signatures['serving_default'].inputs)
 print()
@@ -74,6 +74,7 @@ for image_path in IMAGE_PATHS:
     
     print('Running inference for {}... '.format(image_path), end='')
 
+    # 파일 넘파이로 바꿔줌
     image_np = load_image_into_numpy_array(image_path)
     
     # Things to try:
@@ -100,12 +101,13 @@ for image_path in IMAGE_PATHS:
                    for key, value in detections.items()}
     detections['num_detections'] = num_detections
 
-    # detection_classes should be ints.
+    # detection_classes should be ints. 디텍션 변수에 저장
     detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
     
     print(detections)
     image_np_with_detections = image_np.copy()
 
+    # 표시한 코드
     viz_utils.visualize_boxes_and_labels_on_image_array(
           image_np_with_detections,
           detections['detection_boxes'],
@@ -116,7 +118,7 @@ for image_path in IMAGE_PATHS:
           max_boxes_to_draw=200,
           min_score_thresh=.30,
           agnostic_mode=False)
-
+    # 화면에 보여라
     cv2.imshow(str(image_path) , image_np_with_detections )
 
 cv2.waitKey(0)
